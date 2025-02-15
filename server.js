@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema);
 
 // Register API
-app.post('/register', async (req, res) => {
+app.post('/api/users/register', async (req, res) => {
     const { name, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashedPassword });
@@ -37,7 +37,7 @@ app.post('/register', async (req, res) => {
 });
 
 // Login API
-app.post('/login', async (req, res) => {
+app.post('/api/users/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ error: "User not found" });
@@ -49,5 +49,12 @@ app.post('/login', async (req, res) => {
     res.json({ token });
 });
 
+// Get All Users API
+app.get('/api/users', async (req, res) => {
+    const users = await User.find();
+    res.json(users);
+});
+
 // Start Server
-app.listen(5000, () => console.log('Server running on port 5000'));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
